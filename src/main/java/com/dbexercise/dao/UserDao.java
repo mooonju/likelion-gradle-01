@@ -1,6 +1,6 @@
-package com.line.dbexercise.dao;
+package com.dbexercise.dao;
 
-import com.line.dbexercise.domain.User;
+import com.dbexercise.domain.User;
 
 import java.sql.*;
 import java.util.Map;
@@ -46,7 +46,7 @@ public class UserDao {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         UserDao userDao = new UserDao();
-        // userDao.add();
+//        userDao.add();
         User user = userDao.get("2");
         System.out.println(user.getName());
 
