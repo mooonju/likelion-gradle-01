@@ -12,10 +12,11 @@ class UserDaoTest {
     @Test
     void addAndSelect() {
         AWSUserDaoImpl userDao = new AWSUserDaoImpl();
-        User user = new User("6", "Rara", "1234");
+        User user = new User("7", "Rara", "1234");
         userDao.add(user);
 
         User selectedUser = userDao.getById("6");
         Assertions.assertEquals("Rara", selectedUser.getName());
+        Assertions.assertEquals("1123", selectedUser.getPassword());
     }
 }
