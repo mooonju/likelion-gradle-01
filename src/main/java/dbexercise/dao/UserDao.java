@@ -7,15 +7,19 @@ import java.util.Map;
 
 public class UserDao {
 
-    private AwsConnectionMaker awsConnectionMaker = new AwsConnectionMaker();
+    private ConnectionMaker connectionMaker;
 
     public UserDao() {
-        this.awsConnectionMaker = new AwsConnectionMaker();
+        this.connectionMaker = new AwsConnectionMaker();
+    }
+
+    public UserDao(ConnectionMaker connectionMaker) {
+        this.connectionMaker = connectionMaker;
     }
     public void add(User user) {
         Map<String, String> env = System.getenv();
         try {
-            Connection conn = awsConnectionMaker.makeConnection();
+            Connection conn = connectionMaker.makeConnection();
             PreparedStatement ps = conn.prepareStatement("INSERT INTO users(id, name, password) " +
                     "VALUES(?, ? ,?)");
 
@@ -24,7 +28,7 @@ public class UserDao {
             ps.setString(2, user.getName());
             ps.setString(3, user.getPassword());
 
-            int status = ps.executeUpdate();
+            ps.executeUpdate();
             ps.close();
             conn.close();
         } catch (SQLException e) {
@@ -32,12 +36,12 @@ public class UserDao {
         }
     }
 
-    public User getById(String id)  {
+    public User findById(String id)  {
         Map<String, String> env = System.getenv();
         Connection conn;
 
         try {
-            conn = awsConnectionMaker.makeConnection();
+            conn = connectionMaker.makeConnection();
             PreparedStatement ps = conn.prepareStatement("SELECT id, name, password FROM users WHERE id =?");
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
@@ -50,13 +54,29 @@ public class UserDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int getCount() {
+        Map<String, String> env = System.getenv();
+        Connection conn;
+        try {
+            conn = connectionMaker.makeConnection();
+            PreparedStatement ps = conn.prepareStatement("SELECT COUNT(*) FROM users");
+            ResultSet rs = ps.executeQuery();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+
+    public void deleteAll() {
 
     }
 
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+    public static void main(String[] args) {
         UserDao userDao = new UserDao();
 //        userDao.add(new User("5", "DDD", "1123"));
-        User user = userDao.getById("2");
+        User user = userDao.findById("10");
         System.out.println(user.getName());
 
     }
